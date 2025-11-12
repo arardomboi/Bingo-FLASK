@@ -62,7 +62,9 @@ def handle_toggle(data):
     if 0 <= idx < len(board_state):
         # Flip state and broadcast update to all clients
         board_state[idx] = not board_state[idx]
-        socketio.emit('update', {'index': idx, 'state': board_state[idx]}, broadcast=True)
+        # In some python-socketio versions the 'broadcast' keyword is unsupported;
+        # calling emit without that argument will send to all clients.
+        socketio.emit('update', {'index': idx, 'state': board_state[idx]})
 
 
 if __name__ == "__main__":
