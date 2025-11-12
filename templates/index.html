@@ -10,6 +10,27 @@
 
 <h1>🎓 Student Night Bingo 🎉</h1>
 
+<!-- Modal for first-time color picker -->
+<div id="color-picker-modal" class="modal">
+  <div class="modal-content">
+    <h2>Pick Your Color</h2>
+    <p>Choose a color to mark your bingo selections with</p>
+    <div class="color-grid">
+      <button class="color-option" data-color="#FF6B6B" style="background-color:#FF6B6B" title="Red"></button>
+      <button class="color-option" data-color="#FF9F43" style="background-color:#FF9F43" title="Orange"></button>
+      <button class="color-option" data-color="#FFD93D" style="background-color:#FFD93D" title="Yellow"></button>
+      <button class="color-option" data-color="#6BCB77" style="background-color:#6BCB77" title="Green"></button>
+      <button class="color-option" data-color="#4D96FF" style="background-color:#4D96FF" title="Blue"></button>
+      <button class="color-option" data-color="#A29BFE" style="background-color:#A29BFE" title="Purple"></button>
+      <button class="color-option" data-color="#FD79A8" style="background-color:#FD79A8" title="Pink"></button>
+      <button class="color-option" data-color="#74B9FF" style="background-color:#74B9FF" title="Light Blue"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Minimized color picker button (shown after user picks a color) -->
+<button id="color-picker-button" class="color-picker-button" title="Change your color"></button>
+
 <div class="board"></div>
 
 <footer>

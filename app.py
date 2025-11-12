@@ -39,6 +39,8 @@ labels = [
 
 # Server-side board state (True = active/marked). New clients receive this on connect.
 board_state = [False] * len(labels)
+# Track per-index, per-user color: {index: {user_id: color_hex}}
+board_colors = {i: {} for i in range(len(labels))}
 
 
 @app.route("/")
@@ -48,23 +50,39 @@ def index():
 
 @socketio.on('connect')
 def handle_connect():
-    # Send current labels and board state to the connecting client
-    emit('init', {'labels': labels, 'state': board_state})
+    # Send current labels, board state, and per-index colors to the connecting client
+    emit('init', {
+        'labels': labels,
+        'state': board_state,
+        'colors': board_colors  # {index: {user_id: color_hex}}
+    })
 
 
 @socketio.on('toggle')
 def handle_toggle(data):
-    # Expect data: {'index': <int>}
+    # Expect data: {'index': <int>, 'user_id': <str>, 'color': <hex_color>}
     try:
         idx = int(data.get('index'))
+        user_id = data.get('user_id')
+        color = data.get('color', '#ff66cc')  # default to pink if not provided
     except Exception:
         return
     if 0 <= idx < len(board_state):
         # Flip state and broadcast update to all clients
         board_state[idx] = not board_state[idx]
-        # In some python-socketio versions the 'broadcast' keyword is unsupported;
-        # calling emit without that argument will send to all clients.
-        socketio.emit('update', {'index': idx, 'state': board_state[idx]})
+        
+        # Track color: if toggling on, store the color; if toggling off, remove it
+        if board_state[idx]:
+            board_colors[idx][user_id] = color
+        else:
+            board_colors[idx].pop(user_id, None)
+        
+        # Broadcast update with color information
+        socketio.emit('update', {
+            'index': idx,
+            'state': board_state[idx],
+            'colors': board_colors[idx]  # {user_id: color}
+        })
 
 @socketio.on('force_refresh')
 def handle_force_refresh():
@@ -72,13 +90,21 @@ def handle_force_refresh():
 
     This avoids a full page reload and preserves UI state smoothly across clients.
     """
-    socketio.emit('sync', {'labels': labels, 'state': board_state})
+    socketio.emit('sync', {
+        'labels': labels,
+        'state': board_state,
+        'colors': board_colors
+    })
 
 
 @socketio.on('request_init')
 def handle_request_init():
     """Client can request the current board state (returns only to requester)."""
-    emit('init', {'labels': labels, 'state': board_state})
+    emit('init', {
+        'labels': labels,
+        'state': board_state,
+        'colors': board_colors
+    })
 
 
 if __name__ == "__main__":

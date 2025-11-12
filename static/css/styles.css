@@ -4,6 +4,7 @@
   --accent:#ff66cc;
   --muted:#9aa0a6;
   --text:#ffffff;
+  --user-color:#ff66cc; /* default, can be overridden per button */
 }
 
 /* Mobile-first, compact, high-contrast styles */
@@ -17,6 +18,8 @@ body {
   padding:10px 8px;
   -webkit-font-smoothing:antialiased;
   user-select:none;
+  display:flex;
+  flex-direction:column;
 }
 
 h1 {
@@ -37,6 +40,7 @@ h1 {
   margin:0 auto;
   aspect-ratio:1; /* keep board square */
   padding-bottom:clamp(4px, 1vw, 6px);
+  flex:1; /* expand to fill available space */
 }
 
 /* Buttons scale down proportionally with the board */
@@ -83,6 +87,12 @@ button.active{
   transform:scale(0.985);
   border-color:rgba(0,0,0,0.2);
   box-shadow:0 2px 6px rgba(0,0,0,0.45);
+}
+
+/* If button has a user color, use it instead of the default gradient */
+button.active.has-color{
+  background-color:var(--user-color);
+  color:#000;
 }
 
 /* Edge pulse uses a pseudo element so it doesn't affect layout */
@@ -136,3 +146,94 @@ footer{margin-top:clamp(8px, 2vh, 15px); color:var(--muted); font-size:clamp(10p
 }
 
 /* Remove old media queries; 5x5 is now maintained on all screen sizes */
+
+/* ============ COLOR PICKER MODAL ============ */
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.8);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+
+.modal-content{
+  background:var(--card);
+  border:1px solid rgba(255,102,204,0.2);
+  border-radius:12px;
+  padding:clamp(16px, 5vw, 32px);
+  text-align:center;
+  color:var(--text);
+  max-width:90%;
+  animation:slideUp .3s ease;
+}
+
+@keyframes slideUp{
+  0%{opacity:0; transform:translateY(20px)}
+  100%{opacity:1; transform:translateY(0)}
+}
+
+.modal-content h2{
+  margin:0 0 8px 0;
+  font-size:clamp(18px, 4vw, 24px);
+  color:var(--accent);
+}
+
+.modal-content p{
+  margin:0 0 16px 0;
+  font-size:clamp(12px, 2.5vw, 14px);
+  color:var(--muted);
+}
+
+.color-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:clamp(8px, 2vw, 12px);
+}
+
+.color-option{
+  width:clamp(50px, 12vw, 70px);
+  height:clamp(50px, 12vw, 70px);
+  border:2px solid transparent;
+  border-radius:8px;
+  cursor:pointer;
+  transition:transform .1s ease, border .1s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
+
+.color-option:hover{
+  transform:scale(1.05);
+  border-color:rgba(255,255,255,0.3);
+}
+
+.color-option:active{
+  transform:scale(0.95);
+}
+
+/* ============ MINIMIZED COLOR PICKER BUTTON ============ */
+
+.color-picker-button{
+  display:none;
+  position:fixed;
+  top:clamp(8px, 2vw, 12px);
+  right:clamp(8px, 2vw, 12px);
+  width:clamp(36px, 8vw, 48px);
+  height:clamp(36px, 8vw, 48px);
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.2);
+  cursor:pointer;
+  z-index:100;
+  transition:transform .1s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+
+.color-picker-button:hover{
+  transform:scale(1.1);
+}
+
+.color-picker-button:active{
+  transform:scale(0.95);
+}
