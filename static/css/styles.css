@@ -116,6 +116,21 @@ button:active{transform:scale(0.98);} /* quick tap feedback */
 
 button:focus-visible{outline:2px solid rgba(255,255,255,0.14); outline-offset:2px}
 
+/* Brief blocked feedback when a user attempts to press a claimed box */
+.blocked{
+  animation: blockedShake .7s ease;
+  outline:3px solid rgba(255,0,0,0.85);
+}
+
+@keyframes blockedShake{
+  0%{ transform: translateX(0) }
+  20%{ transform: translateX(-6px) }
+  40%{ transform: translateX(6px) }
+  60%{ transform: translateX(-4px) }
+  80%{ transform: translateX(4px) }
+  100%{ transform: translateX(0) }
+}
+
 footer{margin-top:auto; color:var(--muted); font-size:clamp(7px, 1.2vw, 10px); padding:2px 0}
 
 .footer-text{display:inline-block; margin-right:clamp(6px, 1vw, 8px)}

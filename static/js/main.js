@@ -189,6 +189,17 @@ socket.on('update', data => {
   }
 });
 
+// Server will emit 'blocked' to the requester when a toggle is rejected
+socket.on('blocked', data => {
+  const idx = data && data.index;
+  const btn = document.querySelector(`button[data-index="${idx}"]`);
+  if (btn) {
+    // briefly show a blocked state (shake + outline)
+    btn.classList.add('blocked');
+    setTimeout(() => btn.classList.remove('blocked'), 700);
+  }
+});
+
 // Listen for server-initiated sync command and update the board in-place
 socket.on('sync', data => {
   // Smoothly update UI to match server state without reloading

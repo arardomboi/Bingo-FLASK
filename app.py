@@ -68,15 +68,26 @@ def handle_toggle(data):
     except Exception:
         return
     if 0 <= idx < len(board_state):
+        # If the box is already claimed by other users, block attempts from different users
+        # Allow the original claimer(s) to toggle (so they can unclaim)
+        existing_users = board_colors.get(idx, {})
+        if existing_users and (user_id not in existing_users):
+            # Inform only the requester that their attempt was blocked
+            emit('blocked', {
+                'index': idx,
+                'message': 'Box already claimed by another colour'
+            })
+            return
+
         # Flip state and broadcast update to all clients
         board_state[idx] = not board_state[idx]
-        
+
         # Track color: if toggling on, store the color; if toggling off, remove it
         if board_state[idx]:
             board_colors[idx][user_id] = color
         else:
             board_colors[idx].pop(user_id, None)
-        
+
         # Broadcast update with color information
         socketio.emit('update', {
             'index': idx,
