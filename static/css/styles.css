@@ -76,6 +76,30 @@ button:focus-visible{outline:2px solid rgba(255,102,204,0.18); outline-offset:2p
 
 footer{margin-top:10px; color:var(--muted); font-size:12px}
 
+.footer-text{display:inline-block; margin-right:8px}
+.footer-controls{display:inline-block}
+
+/* Small floating sync button for forcing refresh across clients */
+#force-refresh{
+  appearance:none;
+  -webkit-appearance:none;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.03);
+  color:var(--text);
+  padding:6px 8px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+#force-refresh:active{transform:scale(0.98)}
+
+/* Optional: make it fixed bottom-right on small screens for easy access */
+@media (max-width:520px){
+  .footer-controls{position:fixed; right:12px; bottom:12px}
+  footer{padding-bottom:46px}
+}
+
 /* Slightly reduce columns on very narrow phones to improve readability */
 @media (max-width:420px){
   .board{grid-template-columns:repeat(4, 1fr); height:calc(100vh - 120px);} /* 4 columns keeps buttons bigger */

@@ -45,3 +45,24 @@ socket.on('update', data => {
     socket.emit('request_init');
   }
 });
+
+// Listen for server-initiated sync command and update the board in-place
+socket.on('sync', data => {
+  // Smoothly update UI to match server state without reloading
+  // Optionally could add transition or highlight effect here
+  renderBoard(data.labels, data.state);
+});
+
+// Wire up the force-refresh button, if present in the DOM
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('force-refresh');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // Ask server to broadcast a refresh to all clients
+      socket.emit('force_refresh');
+      // Provide immediate feedback to the clicker
+      btn.classList.add('active');
+      setTimeout(() => btn.classList.remove('active'), 300);
+    });
+  }
+});

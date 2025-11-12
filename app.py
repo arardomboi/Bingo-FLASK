@@ -66,6 +66,20 @@ def handle_toggle(data):
         # calling emit without that argument will send to all clients.
         socketio.emit('update', {'index': idx, 'state': board_state[idx]})
 
+@socketio.on('force_refresh')
+def handle_force_refresh():
+    """Emit the current board state to all connected clients so they can sync in-place.
+
+    This avoids a full page reload and preserves UI state smoothly across clients.
+    """
+    socketio.emit('sync', {'labels': labels, 'state': board_state})
+
+
+@socketio.on('request_init')
+def handle_request_init():
+    """Client can request the current board state (returns only to requester)."""
+    emit('init', {'labels': labels, 'state': board_state})
+
 
 if __name__ == "__main__":
     # Use socketio.run so Flask-SocketIO starts the appropriate async worker (eventlet/gevent)
