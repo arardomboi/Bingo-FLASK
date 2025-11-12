@@ -18,48 +18,56 @@
 
 <h1>🎓 Student Night Bingo 🎉</h1>
 
-<div class="board">
-  <button>Someone drops their VK</button>
-  <button>Someone falls over</button>
-  <button>Someone gets ID’d</button>
-  <button>Someone loses their jacket</button>
-  <button>Someone bumps into their ex</button>
-
-  <button>Mirror selfies in the toilet</button>
-  <button>Someone cries in the bathroom</button>
-  <button>Someone starts chanting</button>
-  <button>Someone says "shots!"</button>
-  <button>Someone gets denied entry</button>
-
-  <button>Someone spills their drink</button>
-  <button>New best friend in smoking area</button>
-  <button>“This is my song!”</button>
-  <button>Someone is barefoot</button>
-  <button>Someone disappears for 30 mins</button>
-
-  <button>Card gets declined</button>
-  <button>“I’ve got a 9am tomorrow”</button>
-  <button>Orders water</button>
-  <button>Gets takeaway mid-night</button>
-  <button>Drops their phone</button>
-
-  <button>Wearing a society hoodie</button>
-  <button>Lost their voice</button>
-  <button>Filming a TikTok</button>
-  <button>Forgets student card</button>
-  <button>“You’re my best friend”</button>
-</div>
+<div class="board"></div>
 
 <footer>
-  Tap squares to mark them off!
+  Tap squares to mark them off! (updates for everyone)
 </footer>
 
+<!-- Socket.IO client (served from CDN). Version should match server compatibility. -->
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js" integrity="" crossorigin="anonymous"></script>
 <script>
-  document.querySelectorAll('button').forEach(button => {
-    button.addEventListener('click', () => {
-      button.classList.toggle('active');
+  const socket = io();
+
+  // Create a button element for an item
+  function makeButton(label, index, active) {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.dataset.index = index;
+    if (active) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      // Ask server to toggle — server will broadcast the update to everyone
+      socket.emit('toggle', { index: index });
     });
+    return btn;
+  }
+
+  // Render full board from labels/state arrays
+  function renderBoard(labels, state) {
+    const board = document.querySelector('.board');
+    board.innerHTML = '';
+    labels.forEach((label, i) => {
+      board.appendChild(makeButton(label, i, !!state[i]));
+    });
+  }
+
+  // On initial connection the server will send the current board
+  socket.on('init', data => {
+    renderBoard(data.labels, data.state);
   });
+
+  // When any client toggles a square, server broadcasts 'update'
+  socket.on('update', data => {
+    const idx = data.index;
+    const state = data.state;
+    const btn = document.querySelector(`button[data-index="${idx}"]`);
+    if (btn) {
+      btn.classList.toggle('active', !!state);
+    }
+  });
+
+  // Fallback: if the page already had static buttons, convert them (not expected here)
+  // Not needed because server sends init on connect.
 </script>
 
 </body>
