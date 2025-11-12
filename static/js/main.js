@@ -93,17 +93,56 @@ function getContrastColor(hexColor) {
 function renderBoard(labels, state, colors) {
   const board = document.querySelector('.board');
   board.innerHTML = '';
-  
+
   // Store colors globally
   if (colors) boardColors = colors;
-  
+
   labels.forEach((label, i) => {
     const btnColors = colors && colors[i] ? colors[i] : {};
-    board.appendChild(makeButton(label, i, !!state[i], btnColors));
+    const btn = makeButton(label, i, !!state[i], btnColors);
+    board.appendChild(btn);
+    // Fit the text after layout (use RAF to ensure dimensions are calculated)
+    requestAnimationFrame(() => fitTextToButton(btn));
   });
+
   // keep focus behavior predictable on mobile
   board.scrollTop = 0;
 }
+
+// Adjust a button's font-size so its text stays fully inside the box.
+// Reduces font-size in 1px steps from computed size until it fits, but
+// doesn't go below a sensible minimum.
+function fitTextToButton(btn) {
+  if (!btn) return;
+  // Reset any inline font-size to allow CSS clamps to apply first
+  btn.style.fontSize = '';
+  const computed = window.getComputedStyle(btn);
+  let fontSize = parseFloat(computed.fontSize) || 12;
+  const minSize = 7; // px — don't make text unreadably small
+
+  // If content already fits, we're done
+  if (btn.scrollHeight <= btn.clientHeight && btn.scrollWidth <= btn.clientWidth) return;
+
+  // Reduce font-size until content fits or we hit the minimum
+  while ((btn.scrollHeight > btn.clientHeight || btn.scrollWidth > btn.clientWidth) && fontSize > minSize) {
+    fontSize -= 1;
+    btn.style.fontSize = fontSize + 'px';
+  }
+}
+
+// Simple debounce utility for resize events
+function debounce(fn, wait) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+// On window resize, re-fit all buttons after a short debounce
+window.addEventListener('resize', debounce(() => {
+  document.querySelectorAll('.board button').forEach(fitTextToButton);
+}, 120));
 
 // On initial connection the server will send the current board
 socket.on('init', data => {
