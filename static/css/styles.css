@@ -8,25 +8,27 @@
 }
 
 /* Mobile-first, compact, high-contrast styles */
-html,body{height:100%;}
+html,body{height:100%; width:100%; margin:0; padding:0; overflow:hidden;}
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background:var(--bg);
   color:var(--text);
   text-align:center;
   margin:0;
-  padding:10px 8px;
+  padding:3px;
   -webkit-font-smoothing:antialiased;
   user-select:none;
   display:flex;
   flex-direction:column;
+  gap:2px;
+  box-sizing:border-box;
 }
 
 h1 {
-  font-size:clamp(1rem, 3.6vw, 1.25rem);
+  font-size:clamp(0.8rem, 2.5vw, 1rem);
   color:var(--accent);
-  margin:6px 0 10px 0;
-  line-height:1.05;
+  margin:4px 0 6px 0;
+  line-height:1;
   font-weight:600;
 }
 
@@ -34,13 +36,12 @@ h1 {
 .board {
   display:grid;
   grid-template-columns:repeat(5, 1fr);
-  gap:clamp(3px, 0.8vw, 5px);
-  width:min(95vw, 100vw); /* use almost full viewport width */
-  max-width:980px;
+  gap:clamp(1px, 0.3vw, 2px);
+  width:min(92vw, 92vh); /* take minimum of width or height to ensure it fits */
+  max-width:none; /* don't limit max width */
   margin:0 auto;
-  aspect-ratio:1; /* keep board square */
-  padding-bottom:clamp(3px, 0.5vw, 5px);
-  flex:1; /* expand to fill available space */
+  aspect-ratio:1 / 1; /* keep board square */
+  padding:clamp(1px, 0.2vw, 2px);
 }
 
 /* Buttons scale down proportionally with the board */
@@ -48,24 +49,28 @@ button {
   background:var(--card);
   color:var(--text);
   border:1px solid rgba(255,102,204,0.08);
-  border-radius:8px;
-  padding:clamp(3px, 1.5vw, 6px);
-  font-size:clamp(9px, 1.8vw, 13px); /* smaller min on tiny screens, keeps scaling */
+  border-radius:4px;
+  padding:0;
+  font-size:clamp(7px, 3.5vw, 12px); /* scales text UP relative to box size */
   cursor:pointer;
   aspect-ratio:1; /* make buttons square */
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
-  line-height:1.05;
+  line-height:1.1;
   white-space:normal;
+  word-wrap:break-word;
   word-break:break-word;
+  overflow-wrap:break-word;
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
   /* Only animate transform (tap feedback). Background/color changes are handled explicitly
      so we can control activation fade vs instant deactivation. */
   transition: transform .06s ease;
   position:relative; /* allow ::after pulse */
+  min-width:0; /* allow button to shrink below content size */
+  min-height:0;
 }
 
 /* Keyframes for a small fade-in when a button becomes active */
@@ -110,7 +115,7 @@ button:active{transform:scale(0.98);} /* quick tap feedback */
 
 button:focus-visible{outline:2px solid rgba(255,102,204,0.18); outline-offset:2px}
 
-footer{margin-top:clamp(8px, 2vh, 15px); color:var(--muted); font-size:clamp(10px, 2vw, 12px)}
+footer{margin-top:auto; color:var(--muted); font-size:clamp(7px, 1.2vw, 10px); padding:2px 0}
 
 .footer-text{display:inline-block; margin-right:clamp(6px, 1vw, 8px)}
 .footer-controls{display:inline-block}
