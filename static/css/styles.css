@@ -41,6 +41,7 @@ h1 {
 }
 
 /* Buttons are compact but accessible for tapping on the move */
+
 button {
   background:var(--card);
   color:var(--text);
@@ -59,15 +60,51 @@ button {
   word-break:break-word;
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
-  transition:background-color .12s ease, transform .06s ease, color .12s ease;
+  /* Only animate transform (tap feedback). Background/color changes are handled explicitly
+     so we can control activation fade vs instant deactivation. */
+  transition: transform .06s ease;
+  position:relative; /* allow ::after pulse */
 }
 
+/* Keyframes for a small fade-in when a button becomes active */
+@keyframes activeFade {
+  0% {
+    background-color: var(--card);
+    color: var(--text);
+  }
+  100% {
+    background-color: var(--accent);
+    color: var(--card);
+  }
+}
+
+/* When a button becomes active, run the fade animation. When it is deactivated,
+   background and color snap back immediately because we don't use transitions for them. */
 button.active{
-  background:linear-gradient(180deg, var(--accent), #ff4fae);
-  color:var(--card);
+  animation: activeFade .14s ease forwards;
   transform:scale(0.985);
   border-color:rgba(0,0,0,0.2);
   box-shadow:0 2px 6px rgba(0,0,0,0.45);
+}
+
+/* Edge pulse uses a pseudo element so it doesn't affect layout */
+button::after{
+  content:'';
+  position:absolute;
+  left:0; right:0; top:0; bottom:0;
+  border-radius:8px;
+  pointer-events:none;
+  opacity:0;
+}
+
+@keyframes edgePulse{
+  0%{ box-shadow: 0 0 0 0 rgba(255,102,204,0.9); opacity:1 }
+  100%{ box-shadow: 0 0 18px 8px rgba(255,102,204,0); opacity:0 }
+}
+
+/* Add pulse class on remote activations to draw attention to the edge */
+button.pulse::after{
+  animation: edgePulse .7s ease-out forwards;
 }
 
 button:active{transform:scale(0.98);} /* quick tap feedback */
