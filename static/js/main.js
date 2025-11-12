@@ -6,10 +6,34 @@ const pendingToggles = new Set();
 
 // User color and ID (picked on first visit)
 let userColor = localStorage.getItem('userColor') || null;
-let userId = localStorage.getItem('userId') || 'user_' + Math.random().toString(36).substr(2, 9);
+let userId = localStorage.getItem('userId') || null;
 
-// Store user ID and color if not already stored
-if (!localStorage.getItem('userId')) {
+// Generate a UUIDv4 for userId if not present. Prefer the native
+// crypto.randomUUID() when available; otherwise fall back to a
+// lightweight RFC-compliant generator.
+function generateUUIDv4() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback: generate using crypto.getRandomValues if available
+  const rnds = (typeof crypto !== 'undefined' && crypto.getRandomValues)
+    ? crypto.getRandomValues(new Uint8Array(16))
+    : Array.from({length:16}, () => Math.floor(Math.random() * 256));
+  // Per RFC4122 §4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40; // version 4
+  rnds[8] = (rnds[8] & 0x3f) | 0x80; // clock_seq_hi_and_reserved
+  const toHex = (n) => n.toString(16).padStart(2, '0');
+  return (
+    toHex(rnds[0]) + toHex(rnds[1]) + toHex(rnds[2]) + toHex(rnds[3]) + '-' +
+    toHex(rnds[4]) + toHex(rnds[5]) + '-' +
+    toHex(rnds[6]) + toHex(rnds[7]) + '-' +
+    toHex(rnds[8]) + toHex(rnds[9]) + '-' +
+    toHex(rnds[10]) + toHex(rnds[11]) + toHex(rnds[12]) + toHex(rnds[13]) + toHex(rnds[14]) + toHex(rnds[15])
+  );
+}
+
+if (!userId) {
+  userId = generateUUIDv4();
   localStorage.setItem('userId', userId);
 }
 
