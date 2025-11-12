@@ -34,12 +34,12 @@ h1 {
 .board {
   display:grid;
   grid-template-columns:repeat(5, 1fr);
-  gap:clamp(4px, 1.2vw, 6px);
-  width:min(90vw, 500px); /* constrain width so small screens scale properly */
+  gap:clamp(3px, 0.8vw, 5px);
+  width:min(95vw, 100vw); /* use almost full viewport width */
   max-width:980px;
   margin:0 auto;
   aspect-ratio:1; /* keep board square */
-  padding-bottom:clamp(4px, 1vw, 6px);
+  padding-bottom:clamp(3px, 0.5vw, 5px);
   flex:1; /* expand to fill available space */
 }
 
@@ -71,28 +71,19 @@ button {
 /* Keyframes for a small fade-in when a button becomes active */
 @keyframes activeFade {
   0% {
-    background-color: var(--card);
-    color: var(--text);
+    opacity: 0.3;
   }
   100% {
-    background-color: var(--accent);
-    color: var(--card);
+    opacity: 1;
   }
 }
 
-/* When a button becomes active, run the fade animation. When it is deactivated,
-   background and color snap back immediately because we don't use transitions for them. */
+/* When a button becomes active, fade in. Background/color are set inline by JS. */
 button.active{
   animation: activeFade .14s ease forwards;
   transform:scale(0.985);
   border-color:rgba(0,0,0,0.2);
   box-shadow:0 2px 6px rgba(0,0,0,0.45);
-}
-
-/* If button has a user color, use it instead of the default gradient */
-button.active.has-color{
-  background-color:var(--user-color);
-  color:#000;
 }
 
 /* Edge pulse uses a pseudo element so it doesn't affect layout */

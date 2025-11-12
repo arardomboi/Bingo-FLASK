@@ -52,12 +52,18 @@ function makeButton(label, index, active, colors) {
 // Apply color to a button based on who activated it
 function applyButtonColor(btn, colors) {
   // colors is {user_id: color_hex}
-  if (!colors || Object.keys(colors).length === 0) return;
+  if (!colors || Object.keys(colors).length === 0) {
+    // No colors: reset to default styling
+    btn.style.backgroundColor = '';
+    btn.style.color = '#ffffff'; // reset text to white
+    btn.classList.remove('has-color');
+    return;
+  }
   
   // Get the first color (could implement gradient for multiple users later)
   const firstColor = Object.values(colors)[0];
   if (firstColor) {
-    btn.style.setProperty('--user-color', firstColor);
+    btn.style.backgroundColor = firstColor;
     btn.classList.add('has-color');
     
     // Calculate perceived brightness and set text color for readability
