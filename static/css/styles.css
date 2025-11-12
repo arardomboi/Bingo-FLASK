@@ -27,30 +27,28 @@ h1 {
   font-weight:600;
 }
 
-/* Board fills the available vertical space and is scrollable if needed */
+/* Board is always 5x5, scaling everything down on very small screens to fit */
 .board {
   display:grid;
   grid-template-columns:repeat(5, 1fr);
-  gap:6px;
-  width:100%;
+  gap:clamp(4px, 1.2vw, 6px);
+  width:min(90vw, 500px); /* constrain width so small screens scale properly */
   max-width:980px;
   margin:0 auto;
-  height:calc(100vh - 120px);
-  overflow:auto;
-  padding-bottom:6px;
+  aspect-ratio:1; /* keep board square */
+  padding-bottom:clamp(4px, 1vw, 6px);
 }
 
-/* Buttons are compact but accessible for tapping on the move */
-
+/* Buttons scale down proportionally with the board */
 button {
   background:var(--card);
   color:var(--text);
   border:1px solid rgba(255,102,204,0.08);
   border-radius:8px;
-  padding:6px 6px;
-  font-size:clamp(11px, 2.4vw, 13px);
+  padding:clamp(3px, 1.5vw, 6px);
+  font-size:clamp(9px, 1.8vw, 13px); /* smaller min on tiny screens, keeps scaling */
   cursor:pointer;
-  min-height:48px;
+  aspect-ratio:1; /* make buttons square */
   display:flex;
   align-items:center;
   justify-content:center;
@@ -111,9 +109,9 @@ button:active{transform:scale(0.98);} /* quick tap feedback */
 
 button:focus-visible{outline:2px solid rgba(255,102,204,0.18); outline-offset:2px}
 
-footer{margin-top:10px; color:var(--muted); font-size:12px}
+footer{margin-top:clamp(8px, 2vh, 15px); color:var(--muted); font-size:clamp(10px, 2vw, 12px)}
 
-.footer-text{display:inline-block; margin-right:8px}
+.footer-text{display:inline-block; margin-right:clamp(6px, 1vw, 8px)}
 .footer-controls{display:inline-block}
 
 /* Small floating sync button for forcing refresh across clients */
@@ -123,9 +121,9 @@ footer{margin-top:10px; color:var(--muted); font-size:12px}
   border:1px solid rgba(255,255,255,0.06);
   background:rgba(255,255,255,0.03);
   color:var(--text);
-  padding:6px 8px;
+  padding:clamp(4px, 1vw, 6px) clamp(6px, 1.5vw, 8px);
   border-radius:8px;
-  font-size:12px;
+  font-size:clamp(10px, 1.8vw, 12px);
   cursor:pointer;
 }
 
@@ -137,13 +135,4 @@ footer{margin-top:10px; color:var(--muted); font-size:12px}
   footer{padding-bottom:46px}
 }
 
-/* Slightly reduce columns on very narrow phones to improve readability */
-@media (max-width:420px){
-  .board{grid-template-columns:repeat(4, 1fr); height:calc(100vh - 120px);} /* 4 columns keeps buttons bigger */
-  button{min-height:52px}
-}
-
-@media (max-width:360px){
-  .board{grid-template-columns:repeat(3, 1fr); height:calc(100vh - 120px);} /* tiny screens fallback to 3 columns */
-  button{min-height:56px; font-size:13px}
-}
+/* Remove old media queries; 5x5 is now maintained on all screen sizes */
