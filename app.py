@@ -6,35 +6,35 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Labels for the 5x5 bingo board (kept here so server can send them to clients)
 labels = [
-    "Someone drops their VK",
+    "Someone drops their drink", #row1, top left
     "Someone falls over",
-    "Someone gets ID’d",
-    "Someone loses their jacket",
-    "Someone bumps into their ex",
+    "Someone throws up",
+    "Gets kicked out",
+    "Some sort of conflict",
 
-    "Mirror selfies in the toilet",
-    "Someone cries in the bathroom",
+    "Mirror selfies in the toilet", #row2
+    "Bump into people you know",
     "Someone starts chanting",
     "Someone says \"shots!\"",
-    "Someone gets denied entry",
+    "Matching outfits",
 
-    "Someone spills their drink",
-    "New best friend in smoking area",
-    "\u201cThis is my song!\u201d",
-    "Someone is barefoot",
-    "Someone disappears for 30 mins",
+    "\u201cI'm so drunk\u201d", #row3
+    "Old person",
+    "FREE SQUARE", #MIDDLE SQUARE
+    "Someone makes out",
+    "Someone dances w another",
 
-    "Card gets declined",
-    "\u201cI\'ve got a 9am tomorrow\u201d",
+    "Apple Bottom Jeans plays", #row4
+    "\u201cI\'ve got a 9am tomorrow\u201d", #BELOW NEED CHANGEING
     "Orders water",
     "Gets takeaway mid-night",
     "Drops their phone",
 
-    "Wearing a society hoodie",
+    "Wearing a society hoodie", #row5
     "Lost their voice",
     "Filming a TikTok",
     "Forgets student card",
-    "\u201cYou\'re my best friend\u201d",
+    "\u201cYou\'re my best friend\u201d", # bottom right
 ]
 
 # Server-side board state (True = active/marked). New clients receive this on connect.
